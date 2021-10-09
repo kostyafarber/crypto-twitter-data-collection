@@ -4,9 +4,9 @@ import pandas as pd
 from binance import Client
 import sys
 
-sys.path.append('../src/utils.py')
+sys.path.append('../src/')
 
-from utils import labels_aggTrades, parse_dates
+from utils import labels_aggTrades, parse_dates, files
 
 api_key = os.environ["BINANCE_API"]
 api_secret = os.environ["BINANCE_API_SECRET"]
@@ -65,8 +65,18 @@ def preprocess_chunk(filepath):
                     index_col='Timestamp',
                     chunksize=100000)
     
-    return pd.concat([chunks for chunks in chunk])
+    df = pd.concat([chunks for chunks in chunk])
+    # Create dollar bars
+
+    df["Dollar Bars"] = df["Price"] * df["Quantity"]
+
+    filename = filepath.split("/")[-1]
+
+    print(f"file processed for {filename}")
+    print()
+    print(f"Dataframe has {df.shape[0]} rows and {df.shape[1]} columns")
+    
+    return df
 
 if __name__ == '__main__':
-    print(datetime.datetime.fromtimestamp(trades[0]['T']/1000))
-    print(binance_inception)
+    print(files)
