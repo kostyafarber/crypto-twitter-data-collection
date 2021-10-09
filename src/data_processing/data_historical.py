@@ -1,5 +1,6 @@
 import os
 import datetime
+import pandas as pd
 from binance import Client
 
 api_key = os.environ["BINANCE_API"]
@@ -11,5 +12,8 @@ symbol = 'BTCAUD'
 
 candles = client.get_historical_klines(symbol, Client.KLINE_INTERVAL_1MINUTE, "1 day ago UTC")
 
-print(datetime.datetime.fromtimestamp(candles[0][0]/1000))
+labels_klines = ["Time", "Open", "High", "Low", "Close", "Volume", "Close Time", "Quote Asset", "Number of Trades", "Taker buy base", "Taker buy Quote", "Ignore"]
+
+
+data = pd.DataFrame(candles, columns=labels)
 
