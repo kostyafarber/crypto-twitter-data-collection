@@ -22,3 +22,8 @@ for year in DATES_YEARS:
        year_month = "-".join([year, month])
 
        DATE_RANGE.append(year_month)
+
+# grab all the file neames 
+data_path = '../data/data/spot/monthly/aggTrades/ETHBTC/*'
+
+files = glob.glob(data_path)
