@@ -3,6 +3,7 @@ import datetime
 import pandas as pd
 from binance import Client
 import sys
+from tqdm import tqdm
 
 sys.path.append('../src/')
 
@@ -56,7 +57,7 @@ def getTEvents(gRaw, h):
 
     return pd.DatetimeIndex(tEvents) 
 
-def preprocess_chunk(filepath):
+def convert_to_pickle(filepath):
     
     chunk = pd.read_csv(filepath, 
                     names=labels_aggTrades, 
@@ -65,9 +66,9 @@ def preprocess_chunk(filepath):
                     index_col='Timestamp',
                     chunksize=100000)
     
-    df = pd.concat([chunks for chunks in chunk])
-    # Create dollar bars
+    df = pd.concat([chunks for chunks in tqdm(chunk)])
 
+    # Create dollar bars
     df["Dollar Bars"] = df["Price"] * df["Quantity"]
 
     filename = filepath.split("/")[-1]
@@ -75,8 +76,33 @@ def preprocess_chunk(filepath):
     print(f"file processed for {filename}")
     print()
     print(f"Dataframe has {df.shape[0]} rows and {df.shape[1]} columns")
+    print()
+    print(f"Converting {filename} to pickle...")
     
+    pkl_filename = filename.replace('.csv', '.pkl')
+
+    df.to_pickle(f"data/{pkl_filename}")
+
+    print(f"{pkl_filename} saved to /data/{pkl_filename}")
+
+    return 
+
+def read_pickle(filepath):
+
+    filename = filepath.split("/")[-1]
+
+    print(f"Reading {filename}...")
+    print()
+
+    df = pd.read_pickle(filepath)
+
+    print(f"{filename} imported.")
+    print()
+    print(f"{filename} has {df.shape[0]} rows and {df.shape[1]} columns.")
+
     return df
 
+
+
 if __name__ == '__main__':
-    print(files)
+    convert_to_pickle(files[0])
