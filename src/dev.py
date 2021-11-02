@@ -5,7 +5,7 @@ from binance import Client, ThreadedWebsocketManager, ThreadedDepthCacheManager
 api_key = os.environ["BINANCE_API"]
 api_secret = os.environ["BINANCE_API_SECRET"]
 
-symbol = 'BNBBTC'
+symbol = 'BTCAUD'
 
 def main():
 
@@ -19,8 +19,7 @@ def main():
         
         print(f"{date} {msg['k']['o']}")  
 
-    
-    twm.start_kline_socket(callback=handle_socket_message, symbol=symbol)
+    twm.start_futures_socket(callback=handle_socket_message, symbol=symbol)
 
     twm.join()
 

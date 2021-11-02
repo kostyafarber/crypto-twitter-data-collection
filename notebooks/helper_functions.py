@@ -105,4 +105,4 @@ def read_pickle(filepath):
 
 
 if __name__ == '__main__':
-    convert_to_pickle(files[0])
+    pass
