@@ -1,11 +1,12 @@
 import os
 import datetime
-from binance import Client, ThreadedWebsocketManager, ThreadedDepthCacheManager
+from binance import ThreadedWebsocketManager
 import pandas as pd
-import time
 
 api_key = os.environ["BINANCE_API"]
 api_secret = os.environ["BINANCE_API_SECRET"]
+
+stop_time = datetime.datetime(2021, 11, 3, 22, 10)
 
 symbol = 'BTCUSDT'
 
@@ -25,27 +26,25 @@ def main():
         asks = msg['a']
 
         data = dict(timestamp=timestamp, bids=bids, asks=asks)
-        #print(date)
-        #print(f"Date: {date} Bids: {msg['b']} Asks: {msg['a']}")  
         global order_book
 
         df = pd.json_normalize(data)
         order_book = pd.concat([order_book, df], ignore_index=True)
-        #test.append(bids)
         print(order_book)
+        
+        global stop_time
 
-    stream = twm.start_depth_socket(callback=handle_socket_message, symbol=symbol)
+        if order_book.timestamp.iloc[-1] > stop_time:
+            
+            print("Closing Connection...")
+            print("Saving " + symbol + 'order book data')
+            order_book.to_pickle('test.pkl')
+
+            twm.stop()
+
+    twm.start_depth_socket(callback=handle_socket_message, symbol=symbol)
     
-    #twm.join()
-
-    time.sleep(10)
-    print("Closing Connection...")
-    twm.stop_socket(stream)
-
-    twm.stop()
-
-    print("Saving " + symbol + 'order book data')
-    order_book.to_pickle('test.pkl')
+    twm.join()
 
 if __name__ == "__main__":
     main()
