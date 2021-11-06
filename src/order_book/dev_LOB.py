@@ -6,7 +6,7 @@ import pandas as pd
 api_key = os.environ["BINANCE_API"]
 api_secret = os.environ["BINANCE_API_SECRET"]
 
-stop_time = datetime.datetime(2021, 11, 3, 22, 10)
+stop_time = datetime.datetime(2021, 11, 4, 21, 53)
 
 symbol = 'BTCUSDT'
 
@@ -26,6 +26,7 @@ def main():
         asks = msg['a']
 
         data = dict(timestamp=timestamp, bids=bids, asks=asks)
+        
         global order_book
 
         df = pd.json_normalize(data)
