@@ -3,6 +3,8 @@ from binance import ThreadedWebsocketManager
 import pandas as pd
 import boto3
 import sys
+import os
+import json
 
 # obtain binance api keys from aws
 ssm = boto3.client('ssm', region_name='ap-southeast-2')
@@ -10,9 +12,10 @@ response = ssm.get_parameters(Names=['binance-public-key', 'binance-api-secret']
 api_key = response['Parameters'][0]["Value"]
 api_secret = response['Parameters'][1]["Value"]
 
-symbol = 'BTCUSDT'
+symbol = 'SHIBDOGE'
 
 order_book = pd.DataFrame()
+order_book.to_csv('log.csv')
 
 # when to stop stream
 time_delta = int(sys.argv[1])
@@ -27,7 +30,7 @@ def main():
     twm.start()
 
     def handle_socket_message(msg):
-    
+        
         timestamp = datetime.datetime.fromtimestamp(msg['E']/1000)
         #stop_time = timestamp + datetime.timedelta(seconds=5)
         bids = msg['b']
@@ -39,6 +42,7 @@ def main():
         df = pd.json_normalize(data)
         order_book = pd.concat([order_book, df], ignore_index=True)
         print(order_book)
+        order_book.to_csv('log.csv', mode='a')
 
         global stop_time
 
@@ -46,20 +50,21 @@ def main():
                 
             print("Closing Connection...")
             print("Saving " + symbol + ' order book data')
+            os.remove('log.csv') # if websocket successful
             file_path = f'{symbol}-{timestamp}.pkl'
             order_book.to_pickle(file_path)
             twm.stop()
 
             # save to s3
-            s3 = boto3.client('s3')
-            bucket = 'crypto-data-kos'
-            s3.Object(bucket, f'data/{file_path}').put(Body=open(f'{file_path}', 'rb'))
-
+            #s3 = boto3.resource('s3')
+            #bucket = 'crypto-data-kos'
+            #s3.Object(bucket, f'data/{file_path}').put(Body=open(f'{file_path}', 'rb'))
+            
         elif msg['e'] == 'error':
 
             # save log of error
-            with open('log.txt', 'w') as log:
-                log.write(msg['e'])
+            with open('data.json', 'w', encoding='utf-8') as f:
+                json.dump(msg, f, ensure_ascii=False, indent=4)
             
             # restart stream
             twm.stop(stream)

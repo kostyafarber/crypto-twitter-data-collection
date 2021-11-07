@@ -1,5 +1,14 @@
 # snippets
 
+# import dev
+import os
+import datetime
+from binance import ThreadedWebsocketManager
+import pandas as pd
+
+api_key = os.environ["BINANCE_API"]
+api_secret = os.environ["BINANCE_API_SECRET"]
+
 # convert binance api convert timestamp to date
 datetime.datetime.fromtimestamp(___/1000)
 
