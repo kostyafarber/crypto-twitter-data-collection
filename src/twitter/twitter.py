@@ -20,8 +20,16 @@ class TwitterStreamer():
         self.tweet_df = pd.DataFrame()
 
     def OAuthBearer(self, request):
-         request.headers['Authorization'] = 'Bearer ' + self.bearer_token
-         return request
+        """Generates the OAuthBearer for the subsequent requests
+
+        Args:
+            request (request_like): request
+
+        Returns:
+            request: request
+        """
+        request.headers['Authorization'] = 'Bearer ' + self.bearer_token
+        return request
 
     def run(self):
         with requests.get("https://api.twitter.com/2/tweets/search/stream", auth=self.OAuthBearer) as r:
@@ -77,6 +85,34 @@ class TwitterStreamer():
         #         for text in tweets:
         #             print(text['text'])
 
+    def set_rules(self, rules: dict) -> str:
+        """This function sets the rules that define what the client uses to search for tweets.
+
+            https://api.twitter.com/2/tweets/search/stream/rules
+
+        Args:
+            rules (dict): A dictionary which sets out the rules:
+        
+        Returns:
+            json: response object 
+
+        Example:
+            >>> rules = {"value": "dog has:images", "tag": "dog pictures"}
+            >>> client.get_stream(rules)
+
+        """
+
+        payload = {"add": rules}
+        response = requests.post(
+            "https://api.twitter.com/2/tweets/search/stream/rules",
+            auth=self.OAuthBearer,
+            json=payload,
+        )
+        if response.status_code != 201:
+            raise Exception(
+                "Cannot add rules (HTTP {}): {}".format(response.status_code, response.text)
+            )
+        print(json.dumps(response.json()))
 
     def get_rules(self):
         response = requests.get(
@@ -88,12 +124,34 @@ class TwitterStreamer():
             )
         print(json.dumps(response.json()))
         return response.json()
+
+    def delete_all_rules(self, rules):
+        if rules is None or "data" not in rules:
+            return None
+
+        ids = list(map(lambda rule: rule["id"], rules["data"]))
+        payload = {"delete": {"ids": ids}}
+        response = requests.post(
+            "https://api.twitter.com/2/tweets/search/stream/rules",
+            auth=self.OAuthBearer,
+            json=payload
+        )
+        if response.status_code != 200:
+            raise Exception(
+                "Cannot delete rules (HTTP {}): {}".format(
+                    response.status_code, response.text
+                )
+            )
+        print(json.dumps(response.json()))
      
 if __name__ == '__main__':
     query_params = {'query': 'btc','tweet.fields': 'created_at'}
 
     stream = TwitterStreamer(bearer_token)
-    stream.get_tweet(query=query_params)
-
-    test = '{"data": [{"id": "1461819926709104640", "value": "dog has:images", "tag": "dog pictures"}, {"id": "1461819926709104641", "value": "cat has:images -grumpy", "tag": "cat pictures"}], "meta": {"sent": "2021-11-20T02:05:47.875Z", "result_count": 2}}'
+    rules = stream.get_rules()
+    stream.set_rules()
+    pd.DataFrame()
+    #stream.delete_all_rules(rules)
+    #print(rules)
+    #test = '{"data": [{"id": "1461819926709104640", "value": "dog has:images", "tag": "dog pictures"}, {"id": "1461819926709104641", "value": "cat has:images -grumpy", "tag": "cat pictures"}], "meta": {"sent": "2021-11-20T02:05:47.875Z", "result_count": 2}}'
     
