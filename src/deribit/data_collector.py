@@ -71,12 +71,25 @@ class DataCollector():
 
         if 'params' in response.keys() and response['method'] == 'subscription':
 
-            timestamp = datetime.fromtimestamp(response['params']['data']['timestamp']/1000)
+            timestamp = datetime.fromtimestamp(response['params']['data']['timestamp']/1000).strftime('%Y-%m-%d %H:%M:%S')
             bids = response['params']['data']['bids']
             asks = response['params']['data']['asks']
+
+            total_bids = 0
+            total_asks = 0
+            for bid, ask in zip(bids, asks):
+                total_bids += bid[1]
+                total_asks += ask[1]
             
-            data = dict(timestamp=timestamp, bids=bids, asks=asks)
-            df = pd.json_normalize(data)
+            mid_price = (bids[0][0] + asks[0][0])/2
+            net_ofi = (total_bids - total_asks)/(total_bids + total_asks)
+
+            #data = dict(timestamp=timestamp, bids=bids, asks=asks)
+            #print(net_ofi)
+            print(f'{timestamp}: {net_ofi} {mid_price}')
+            #df = pd.DataFrame.from_dict(data)
+            #print(df)
+
             self.orderbook = pd.concat([self.orderbook, df], ignore_index=True)
             
             print(self.orderbook)
@@ -154,9 +167,7 @@ class DataCollector():
             try:
                 self.ws.run_forever()
             except:
-                self.ws.close()
-                self.ws = websocket.WebSocketApp(self.exchange_version, on_message=self.on_message, on_open=self.on_open)
-
+                continue
 if __name__ == '__main__':
 
     trace = False
