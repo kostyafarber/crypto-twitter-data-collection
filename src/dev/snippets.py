@@ -5,12 +5,14 @@ import os
 import datetime
 from binance import ThreadedWebsocketManager
 import pandas as pd
+import glob
+import matplotlib
 
 api_key = os.environ["BINANCE_API"]
 api_secret = os.environ["BINANCE_API_SECRET"]
 
 # convert binance api convert timestamp to date
-datetime.datetime.fromtimestamp(___/1000)
+datetime.datetime.fromtimestamp(1/1000)
 
 # set default size in matplotlib
 matplotlib.rcParams['figure.figsize'] = (20, 10)
@@ -36,3 +38,9 @@ for year in DATES_YEARS:
 data_path = '../data/data/spot/monthly/aggTrades/ETHBTC/*'
 
 files = glob.glob(data_path)
+
+# how to import api keys from amazon using boto
+import boto3
+
+ssm = boto3.client('ssm', region_name='ap-southeast-2', aws_access_key_id='AKIAQQUWHDWV3JE5P6FY', aws_secret_access_key='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')
+response = ssm.get_parameters(Names=['binance-public-key', 'binance-api-secret'], WithDecryption=True)

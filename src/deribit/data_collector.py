@@ -84,10 +84,11 @@ class DataCollector():
             mid_price = (bids[0][0] + asks[0][0])/2
             net_ofi = (total_bids - total_asks)/(total_bids + total_asks)
 
-            #data = dict(timestamp=timestamp, bids=bids, asks=asks)
+            data = dict(timestamp=[timestamp], mid_price=[mid_price], net_ofi=[net_ofi])
             #print(net_ofi)
-            print(f'{timestamp}: {net_ofi} {mid_price}')
-            #df = pd.DataFrame.from_dict(data)
+            #print(f'{timestamp}: {net_ofi} {mid_price}')
+            df = pd.DataFrame(data)
+            df.set_index('timestamp')
             #print(df)
 
             self.orderbook = pd.concat([self.orderbook, df], ignore_index=True)
