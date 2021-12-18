@@ -11,7 +11,7 @@ client_secret = os.environ["CLIENT_SECRET_DERIBIT"]
 exchange_version = 'wss://www.deribit.com/ws/api/v2/'
 
 # twitter
-bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAfXVwEAAAAAVepADsHsz0lrl3PAhPLXyaIp0kg%3DgBPFUEH0usHpCwWR2yEEGgrketSRxqCswS7R3YQABC9tJ7IhVp'
+bearer_token = os.environ['BEARER_TOKEN_TWITTER']
 query_params = {'query': 'btc','tweet.fields': 'created_at'}
 
 data = pd.DataFrame()

@@ -6,7 +6,7 @@ import json
 
 # To set your enviornment variables in your terminal run the following line:
 # export 'BEARER_TOKEN'='<your_bearer_token>'
-bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAfXVwEAAAAAVepADsHsz0lrl3PAhPLXyaIp0kg%3DgBPFUEH0usHpCwWR2yEEGgrketSRxqCswS7R3YQABC9tJ7IhVp'
+bearer_token = os.environ['BEARER_TOKEN_TWITTER']
 
 
 def bearer_oauth(r):

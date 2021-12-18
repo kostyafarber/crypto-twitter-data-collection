@@ -6,13 +6,7 @@ import requests
 import datetime
 import pandas as pd
 
-# request to get credentials at http://apps.twitter.com
-consumer_key    = 'iutQySUWOWcNDWsXQnaAB4ChU'
-consumer_secret = 'Pmqbdx1pR46441JILzPuExkiRLhtrdzVBWLznp8mu4M5HKXiYo'
-access_token    = '1070153862516944902-MdkhsN2ObzbFekyVIWCbcJJDnXAsIW'
-access_secret   = 'NlAiqrSmeeozBJ1B5rvmzoCFMZn83qTsMXtjdhl1D9fEI'
-
-bearer_token = 'AAAAAAAAAAAAAAAAAAAAAAfXVwEAAAAAVepADsHsz0lrl3PAhPLXyaIp0kg%3DgBPFUEH0usHpCwWR2yEEGgrketSRxqCswS7R3YQABC9tJ7IhVp'
+bearer_token = os.environ['BEARER_TOKEN_TWITTER']
 
 class TwitterStreamer(Thread):
     def __init__(self, bearer_token) -> str:
