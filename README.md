@@ -9,3 +9,4 @@ To collect LOB data, [Deribit](https://www.deribit.com/) provides perpetual cont
 
 To use the tool, you can `cd` into `/app/src` and change the `data_collector.py` to point to your api keys. 
 
+![](images/crypto.gif)
