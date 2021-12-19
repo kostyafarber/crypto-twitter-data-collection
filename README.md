@@ -5,4 +5,7 @@ A collection of scripts to interact with various cryptocurrency exchanges. Prima
 
 To collect LOB data, [Deribit](https://www.deribit.com/) provides perpetual contracts and we can obtain data from their exchange using their [API](https://docs.deribit.com/). 
 
+# Usage
+
+To use the tool, you can `cd` into `/app/src` and change the `data_collector.py` to point to your api keys. 
 
